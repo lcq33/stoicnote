@@ -1,0 +1,2624 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#002FA7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="斯多葛日常">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <title>斯多葛日常规划</title>
+  <style>
+    :root {
+      --blue: #002fa7;
+      --blue-soft: rgba(0, 47, 167, 0.08);
+      --blue-line: rgba(0, 47, 167, 0.18);
+      --white: #ffffff;
+      --ink: #101114;
+      --muted: #6f7380;
+      --line: #e9ebf0;
+      --danger: #b00020;
+      --radius: 16px;
+      --shadow: 0 20px 50px rgba(16, 17, 20, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--white);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", sans-serif;
+      line-height: 1.5;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    select:focus-visible {
+      outline: 3px solid rgba(0, 47, 167, 0.28);
+      outline-offset: 2px;
+    }
+
+    .app {
+      position: relative;
+      width: min(100%, 430px);
+      min-height: 100dvh;
+      margin: 0 auto;
+      background: var(--white);
+      border-inline: 1px solid var(--line);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      min-height: 88px;
+      padding: 24px 22px 14px;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .screen-title {
+      margin: 0;
+      color: var(--blue);
+      font-size: 26px;
+      line-height: 1.15;
+      font-weight: 720;
+      letter-spacing: 0;
+    }
+
+    .screen-subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .main {
+      padding: 24px 22px 104px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 17px;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .section-note {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .label {
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .input,
+    .textarea,
+    .select {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--ink);
+      padding: 12px 13px;
+      font-size: 16px;
+    }
+
+    .textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .select {
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, var(--blue) 50%),
+        linear-gradient(135deg, var(--blue) 50%, transparent 50%);
+      background-position: calc(100% - 18px) 21px, calc(100% - 12px) 21px;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 34px;
+    }
+
+    .error {
+      min-height: 18px;
+      color: var(--danger);
+      font-size: 12px;
+    }
+
+    .primary,
+    .secondary,
+    .ghost,
+    .danger {
+      min-height: 44px;
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    .primary {
+      background: var(--blue);
+      color: var(--white);
+    }
+
+    .secondary {
+      border: 1px solid var(--blue);
+      background: var(--white);
+      color: var(--blue);
+    }
+
+    .ghost {
+      background: transparent;
+      color: var(--blue);
+      padding-inline: 4px;
+    }
+
+    .danger {
+      background: transparent;
+      color: var(--danger);
+      padding-inline: 4px;
+    }
+
+    .primary:active,
+    .secondary:active,
+    .ghost:active,
+    .danger:active,
+    .nav-button:active,
+    .chip:active {
+      transform: scale(0.98);
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .empty {
+      display: grid;
+      place-items: center;
+      min-height: 110px;
+      border: 1px dashed var(--blue-line);
+      border-radius: var(--radius);
+      color: var(--muted);
+      text-align: center;
+      padding: 22px;
+      font-size: 14px;
+    }
+
+    .network {
+      position: relative;
+      min-height: 260px;
+      margin-top: 18px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .network svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .node {
+      position: absolute;
+      display: grid;
+      place-items: center;
+      width: 88px;
+      min-height: 48px;
+      padding: 8px 10px;
+      border: 1px solid var(--blue);
+      border-radius: 999px;
+      background: var(--white);
+      color: var(--blue);
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      overflow-wrap: anywhere;
+      cursor: pointer;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      min-height: 36px;
+      border: 1px solid var(--blue-line);
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      padding: 7px 11px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .segment {
+      min-height: 44px;
+      border: 1px solid var(--blue-line);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .segment.active {
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .idea-notes {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .idea-note {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+
+    .idea-note-title {
+      margin: 0 0 6px;
+      color: var(--blue);
+      font-size: 15px;
+      font-weight: 720;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .item {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      background: var(--white);
+    }
+
+    .item-main {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .item-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+    }
+
+    .item-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 720;
+      overflow-wrap: anywhere;
+    }
+
+    .item-meta {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    .subtasks {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .subtask {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .check {
+      display: inline-grid;
+      place-items: center;
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      margin-top: 2px;
+      border: 1px solid var(--blue);
+      border-radius: 50%;
+      color: var(--blue);
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .confirm-question {
+      margin: 16px 0;
+      color: var(--blue);
+      font-size: 18px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    .memo-time {
+      margin: 0 0 8px;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .memo-body {
+      margin: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      font-size: 15px;
+    }
+
+    .today-date {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .anchor-card {
+      border-radius: var(--radius);
+      background: var(--blue-soft);
+      color: var(--blue);
+      padding: 18px;
+      font-size: 18px;
+      line-height: 1.55;
+      font-weight: 650;
+      overflow-wrap: anywhere;
+    }
+
+    .item.completed .item-title {
+      color: var(--muted);
+    }
+
+    .complete-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .idea-stats {
+      display: grid;
+      gap: 10px;
+    }
+
+    .idea-stat {
+      border: 1px solid var(--blue-line);
+      border-radius: var(--radius);
+      background: var(--blue-soft);
+      padding: 14px;
+    }
+
+    .idea-stat-title {
+      margin: 0 0 10px;
+      color: var(--blue);
+      font-size: 15px;
+      font-weight: 720;
+      overflow-wrap: anywhere;
+    }
+
+    .idea-stat-list {
+      display: grid;
+      gap: 7px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .idea-stat-item {
+      color: var(--ink);
+      font-size: 14px;
+      overflow-wrap: anywhere;
+    }
+
+    .check-button {
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      min-height: 24px;
+      flex: 0 0 auto;
+      margin-top: 1px;
+      border: 1px solid var(--blue);
+      border-radius: 50%;
+      background: var(--white);
+      color: transparent;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .check-button.done {
+      background: var(--blue);
+      color: var(--white);
+    }
+
+    .checkable-text.done {
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    .floating-action {
+      position: fixed;
+      right: max(18px, calc((100vw - 430px) / 2 + 18px));
+      bottom: calc(92px + env(safe-area-inset-bottom));
+      z-index: 35;
+      min-width: 104px;
+      min-height: 56px;
+      border-radius: 999px;
+      padding: 0 18px;
+      box-shadow: 0 12px 28px rgba(0, 47, 167, 0.28);
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      z-index: 30;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      width: min(100%, 430px);
+      min-height: 74px;
+      padding: 8px 10px max(8px, env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .nav-button {
+      display: grid;
+      place-items: center;
+      gap: 3px;
+      min-height: 56px;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .nav-icon {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .nav-button.active {
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      background: rgba(16, 17, 20, 0.28);
+      padding: 20px 14px;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .sheet {
+      width: min(100%, 402px);
+      max-height: min(88dvh, 720px);
+      overflow-y: auto;
+      border-radius: 14px 14px 8px 8px;
+      background: var(--white);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .sheet-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .sheet-title {
+      margin: 0;
+      color: var(--blue);
+      font-size: 21px;
+      line-height: 1.25;
+      font-weight: 760;
+    }
+
+    .step-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .step-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--line);
+    }
+
+    .step-dot.active {
+      background: var(--blue);
+    }
+
+    .subtask-row {
+      display: grid;
+      grid-template-columns: 1fr 44px;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .icon-button {
+      display: grid;
+      place-items: center;
+      min-width: 44px;
+      min-height: 44px;
+      border-radius: var(--radius);
+      background: transparent;
+      color: var(--danger);
+    }
+
+    .icon-button svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .note-bar {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (min-width: 640px) {
+      body {
+        background: #f7f8fb;
+      }
+
+      .app {
+        min-height: calc(100dvh - 28px);
+        margin-block: 14px;
+        border-radius: 18px;
+        overflow: clip;
+      }
+
+      .bottom-nav {
+        bottom: 14px;
+        border-inline: 1px solid var(--line);
+        border-radius: 0 0 18px 18px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    /* Native app card refresh */
+    html,
+    body {
+      background: #f2f2f7;
+    }
+
+    .app {
+      background: #f2f2f7;
+      border-inline: 0;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      min-height: 56px;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-bottom: 0;
+      background: rgba(242, 242, 247, 0.92);
+      backdrop-filter: blur(14px);
+    }
+
+    .topbar > div {
+      text-align: center;
+    }
+
+    .screen-title {
+      color: var(--ink);
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .screen-subtitle {
+      display: none;
+    }
+
+    .top-add {
+      position: absolute;
+      right: 20px;
+      top: 10px;
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: var(--white);
+      font-size: 26px;
+      font-weight: 600;
+      line-height: 1;
+      padding: 0 0 2px;
+    }
+
+    .main {
+      padding: 20px 20px 108px;
+    }
+
+    .section {
+      margin-bottom: 24px;
+    }
+
+    .section + .section {
+      margin-top: 12px;
+    }
+
+    .section-head {
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .section-note,
+    .item-meta,
+    .memo-time {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .item,
+    .anchor-card,
+    .network-card,
+    .idea-note,
+    .idea-stat,
+    .input-card,
+    .empty {
+      border: 0;
+      border-radius: 16px;
+      background: var(--white);
+      padding: 20px;
+      box-shadow: none;
+    }
+
+    .list,
+    .idea-notes,
+    .idea-stats {
+      gap: 12px;
+    }
+
+    .item-main {
+      gap: 14px;
+    }
+
+    .item-title {
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    .task-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .idea-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .task-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 14px 0 12px;
+    }
+
+    .task-progress {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .today-date {
+      margin: 24px 0 18px;
+      color: var(--ink);
+    }
+
+    .date-weekday {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
+    .date-main,
+    .date-month {
+      display: block;
+      color: var(--ink);
+      font-size: 48px;
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: 0;
+    }
+
+    .anchor-card {
+      position: relative;
+      color: var(--blue);
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.55;
+      padding-left: 24px;
+    }
+
+    .anchor-card::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 18px;
+      bottom: 18px;
+      width: 4px;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    .network-card {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .network {
+      min-height: 280px;
+      margin-top: 0;
+      border: 0;
+    }
+
+    .check-button {
+      width: 28px;
+      height: 28px;
+      min-width: 28px;
+      min-height: 28px;
+    }
+
+    .habit-done {
+      opacity: 0.5;
+    }
+
+    .habit-done .item-title {
+      text-decoration: line-through;
+    }
+
+    .complete-badge {
+      font-weight: 700;
+    }
+
+    .confirm-question {
+      margin: 24px 0 18px;
+      color: var(--blue);
+      font-size: 22px;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+
+    .input-card textarea {
+      width: 100%;
+      min-height: 116px;
+      border: 0;
+      outline: 0;
+      resize: vertical;
+      color: var(--ink);
+      background: transparent;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .send-button {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      margin-left: auto;
+      border-radius: 50%;
+      background: var(--blue);
+      color: var(--white);
+      font-size: 18px;
+      font-weight: 700;
+      padding: 0;
+    }
+
+    .floating-action {
+      display: none;
+    }
+
+    .bottom-nav {
+      min-height: 78px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.98);
+    }
+
+    .nav-button {
+      background: transparent;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .nav-button.active {
+      background: transparent;
+      color: var(--blue);
+    }
+
+    .nav-icon {
+      stroke-width: 1.5;
+    }
+
+    .modal {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 0 10px;
+    }
+
+    .sheet {
+      position: relative;
+      width: min(100%, 430px);
+      max-height: min(88dvh, 760px);
+      border-radius: 24px 24px 0 0;
+      padding: 32px 20px 22px;
+    }
+
+    .sheet::before {
+      content: "";
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      width: 36px;
+      height: 4px;
+      border-radius: 999px;
+      background: #c7c7cc;
+      transform: translateX(-50%);
+    }
+
+    .sheet-title {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .input,
+    .textarea,
+    .select {
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      border-radius: 0;
+      padding: 12px 0;
+      background-color: transparent;
+      font-size: 16px;
+    }
+
+    .primary {
+      width: 100%;
+      min-height: 52px;
+      border-radius: 12px;
+      font-weight: 700;
+    }
+
+    .secondary {
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--blue);
+      background: var(--white);
+      color: var(--blue);
+      padding: 10px 14px;
+      font-size: 14px;
+    }
+
+    .section-head > .secondary {
+      min-width: 36px;
+      min-height: 36px;
+      border-radius: 50%;
+      border: 0;
+      background: var(--blue);
+      color: var(--white);
+      padding: 0 10px;
+      font-size: 0;
+    }
+
+    .section-head > .secondary::before {
+      content: "+";
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 600;
+    }
+
+    .ghost,
+    .danger {
+      font-weight: 600;
+    }
+
+    #ideaForm,
+    #connectionForm,
+    #habitForm {
+      display: none !important;
+    }
+
+    .subtasks {
+      gap: 12px;
+      margin-top: 0;
+    }
+
+    .subtask {
+      align-items: center;
+      font-size: 15px;
+    }
+
+    .memo-body {
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .action-list {
+      display: grid;
+      gap: 4px;
+    }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 56px;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      padding: 0;
+      text-align: left;
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .action-row:last-child {
+      border-bottom: 0;
+    }
+
+    .action-row span:last-child {
+      color: var(--muted);
+      font-weight: 400;
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="topbar">
+      <div>
+        <h1 class="screen-title" id="screenTitle">定义自我</h1>
+        <p class="screen-subtitle" id="screenSubtitle">先锚定你想成为的人。</p>
+      </div>
+      <button class="top-add" id="topAddButton" type="button" aria-label="添加">+</button>
+    </header>
+
+    <main class="main">
+      <section class="screen active" id="screen-today" aria-labelledby="screenTitle">
+        <div class="section">
+          <p class="today-date" id="todayDate"></p>
+          <div class="anchor-card" id="identityAnchor"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">
+            <h2 class="section-title">今日习惯</h2>
+          </div>
+          <div class="list" id="todayHabitList"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">
+            <h2 class="section-title">临时任务</h2>
+          </div>
+          <div class="list" id="todayTaskList"></div>
+        </div>
+
+        <button class="primary floating-action open-task-modal" type="button">添加任务</button>
+      </section>
+
+      <section class="screen" id="screen-self" aria-labelledby="screenTitle">
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <h2 class="section-title">理念节点</h2>
+              <p class="section-note">每个节点是一句长期存在的自我定义。</p>
+            </div>
+          </div>
+          <div class="network-card">
+            <div class="network" id="network" aria-label="自我理念网状结构"></div>
+          </div>
+          <form id="ideaForm" novalidate hidden>
+            <label class="field">
+              <span class="label">我想成为...</span>
+              <input class="input" id="ideaInput" maxlength="24" placeholder="例如：自律、独立、有能力">
+            </label>
+            <label class="field">
+              <span class="label">理念阐述</span>
+              <textarea class="textarea" id="ideaNoteInput" placeholder="写一句你为什么重视这个理念。"></textarea>
+              <span class="error" id="ideaError"></span>
+            </label>
+            <div class="row-actions">
+              <button class="primary" type="submit">添加理念</button>
+              <button class="ghost" id="cancelIdeaForm" type="button">取消</button>
+            </div>
+          </form>
+          <div class="idea-notes" id="ideaNotes"></div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <h2 class="section-title">连接节点</h2>
+              <p class="section-note">让相互支撑的理念形成一张网。</p>
+            </div>
+          </div>
+          <form id="connectionForm" novalidate>
+            <label class="field">
+              <span class="label">起点理念</span>
+              <select class="select" id="fromIdea"></select>
+            </label>
+            <label class="field">
+              <span class="label">终点理念</span>
+              <select class="select" id="toIdea"></select>
+              <span class="error" id="connectionError"></span>
+            </label>
+            <button class="secondary" type="submit">建立连接</button>
+          </form>
+          <div class="chip-row" id="connectionList"></div>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <div>
+              <h2 class="section-title">每日必做</h2>
+              <p class="section-note">每天自动出现，绑定一个理念。</p>
+            </div>
+          </div>
+          <form id="habitForm" novalidate hidden>
+            <label class="field">
+              <span class="label">习惯</span>
+              <input class="input" id="habitInput" maxlength="28" placeholder="例如：学习英文 20 分钟">
+            </label>
+            <label class="field">
+              <span class="label">开始时间</span>
+              <input class="input" id="habitStartTime" type="time">
+            </label>
+            <label class="field">
+              <span class="label">预计耗时（分钟）</span>
+              <input class="input" id="habitDuration" type="number" min="1" step="1" placeholder="例如：20">
+            </label>
+            <label class="field">
+              <span class="label">关联理念</span>
+              <select class="select" id="habitIdea"></select>
+              <span class="error" id="habitError"></span>
+            </label>
+            <div class="row-actions">
+              <button class="secondary" type="submit">添加习惯</button>
+              <button class="ghost" id="cancelHabitForm" type="button">取消</button>
+            </div>
+          </form>
+          <div class="list" id="habitList"></div>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-confirm" aria-labelledby="screenTitle">
+        <div class="section">
+          <p class="confirm-question">今天的行动，有没有让我更接近<br>我想成为的那个人？</p>
+          <div class="idea-stats" id="confirmationStats" aria-label="今日已完成任务与理念统计"></div>
+        </div>
+        <div class="section">
+          <form class="input-card" id="reflectionForm" novalidate>
+            <textarea id="reflectionInput" placeholder="写下今天的一句确认……"></textarea>
+            <span class="error" id="reflectionError"></span>
+            <button class="send-button" type="submit" aria-label="保存确认">↑</button>
+          </form>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <h2 class="section-title">历史记录</h2>
+          </div>
+          <div class="list" id="reflectionList"></div>
+        </div>
+      </section>
+
+      <section class="screen" id="screen-memo" aria-labelledby="screenTitle">
+        <div class="section">
+          <form class="input-card" id="memoForm" novalidate>
+            <textarea id="memoInput" placeholder="随手写下一个想法。"></textarea>
+            <span class="error" id="memoError"></span>
+            <button class="send-button" type="submit" aria-label="保存备忘">↑</button>
+          </form>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <h2 class="section-title">数据备份</h2>
+          </div>
+          <article class="item">
+            <div class="item-main">
+              <div>
+                <h3 class="item-title">导出与恢复</h3>
+                <p class="item-meta">保存本地数据，换手机或重装前可以备份。</p>
+              </div>
+            </div>
+            <div class="row-actions" style="margin-top: 14px;">
+              <button class="ghost" id="exportDataButton" type="button">导出数据</button>
+              <button class="ghost" id="importDataButton" type="button">导入数据</button>
+              <input id="importDataInput" type="file" accept="application/json,.json" hidden>
+            </div>
+            <span class="error" id="backupMessage"></span>
+          </article>
+        </div>
+        <div class="section">
+          <div class="section-head">
+            <h2 class="section-title">备忘录</h2>
+          </div>
+          <div class="list" id="memoList"></div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="主导航">
+      <button class="nav-button active" type="button" data-screen="today">
+        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M3 10h18"></path><path d="m9 16 2 2 4-5"></path></svg>
+        <span>今日</span>
+      </button>
+      <button class="nav-button" type="button" data-screen="self">
+        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M4 12h5"></path><path d="M15 12h5"></path><path d="m6 6 3.5 3.5"></path><path d="m14.5 14.5 3.5 3.5"></path><path d="m18 6-3.5 3.5"></path><path d="m9.5 14.5-3.5 3.5"></path></svg>
+        <span>自我</span>
+      </button>
+      <button class="nav-button" type="button" data-screen="confirm">
+        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18"></path><path d="M5 8h14"></path><path d="M6 16h12"></path></svg>
+        <span>确认</span>
+      </button>
+      <button class="nav-button" type="button" data-screen="memo">
+        <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"></path><path d="M8 8h8"></path><path d="M8 12h8"></path><path d="M8 16h5"></path></svg>
+        <span>备忘录</span>
+      </button>
+    </nav>
+  </div>
+
+  <div class="modal" id="selfActionModal" role="dialog" aria-modal="true" aria-labelledby="selfActionTitle">
+    <div class="sheet">
+      <div class="sheet-head">
+        <div>
+          <h2 class="sheet-title" id="selfActionTitle">添加到自我</h2>
+          <p class="section-note">选择要添加的内容。</p>
+        </div>
+        <button class="ghost" id="closeSelfActionModal" type="button">关闭</button>
+      </div>
+      <div class="action-list">
+        <button class="action-row" type="button" data-self-action="idea"><span>添加理念</span><span>→</span></button>
+        <button class="action-row" type="button" data-self-action="connection"><span>添加连接</span><span>→</span></button>
+        <button class="action-row" type="button" data-self-action="habit"><span>添加每日必做</span><span>→</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="addModal" role="dialog" aria-modal="true" aria-labelledby="addModalTitle">
+    <div class="sheet">
+      <div class="sheet-head">
+        <div>
+          <h2 class="sheet-title" id="addModalTitle">添加</h2>
+          <p class="section-note" id="addModalNote">把新的内容放进今天的方向里。</p>
+        </div>
+        <button class="ghost" id="closeAddModal" type="button">关闭</button>
+      </div>
+      <form id="addForm" novalidate>
+        <div id="addFields"></div>
+        <span class="error" id="addError"></span>
+        <div class="row-actions" style="margin-top: 18px;">
+          <button class="primary" type="submit">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="taskModal" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
+    <div class="sheet">
+      <div class="sheet-head">
+        <div>
+          <h2 class="sheet-title" id="taskModalTitle">添加临时任务</h2>
+          <p class="section-note" id="taskModalNote">先确认它为什么值得做。</p>
+        </div>
+        <button class="ghost" id="closeTaskModal" type="button">关闭</button>
+      </div>
+
+      <div class="step-line" aria-hidden="true">
+        <span class="step-dot active" id="stepDotOne"></span>
+        <span class="step-dot" id="stepDotTwo"></span>
+      </div>
+
+      <form id="taskStepOne" novalidate>
+        <div class="field">
+          <span class="label">任务类型</span>
+          <div class="segmented">
+            <button class="segment active" type="button" data-task-type="simple">简短任务</button>
+            <button class="segment" type="button" data-task-type="long">长任务</button>
+          </div>
+        </div>
+        <label class="field">
+          <span class="label">任务</span>
+          <input class="input" id="taskTitle" maxlength="36" placeholder="例如：整理作品集">
+        </label>
+        <label class="field">
+          <span class="label">为什么值得做？</span>
+          <textarea class="textarea" id="taskWhy" placeholder="它会怎样连接到我想成为的人？"></textarea>
+        </label>
+        <label class="field">
+          <span class="label">关联理念</span>
+          <select class="select" id="taskIdea"></select>
+        </label>
+        <label class="field">
+          <span class="label">开始时间</span>
+          <input class="input" id="taskStartTime" type="time">
+        </label>
+        <label class="field">
+          <span class="label">预计耗时（分钟）</span>
+          <input class="input" id="taskDuration" type="number" min="1" step="1" placeholder="例如：30">
+          <span class="error" id="taskStepOneError"></span>
+        </label>
+        <button class="primary" id="taskStepOneButton" type="submit">保存任务</button>
+      </form>
+
+      <form id="taskStepTwo" novalidate hidden>
+        <div class="field">
+          <span class="label">拆解为 5-30 分钟行动</span>
+          <div id="subtaskFields"></div>
+          <span class="error" id="taskStepTwoError"></span>
+        </div>
+        <div class="row-actions">
+          <button class="secondary" id="addSubtask" type="button">添加一步</button>
+          <button class="ghost" id="backToTaskStepOne" type="button">上一步</button>
+        </div>
+        <div class="note-bar">拆解完成前不能关闭此界面。</div>
+        <div class="row-actions" style="margin-top: 18px;">
+        <button class="primary" id="finishTaskButton" type="submit">完成添加</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="editModal" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+    <div class="sheet">
+      <div class="sheet-head">
+        <div>
+          <h2 class="sheet-title" id="editModalTitle">编辑</h2>
+          <p class="section-note" id="editModalNote">修改后会立即同步到相关页面。</p>
+        </div>
+        <button class="ghost" id="closeEditModal" type="button">关闭</button>
+      </div>
+      <form id="editForm" novalidate>
+        <div id="editFields"></div>
+        <span class="error" id="editError"></span>
+        <div class="row-actions" style="margin-top: 18px;">
+          <button class="primary" type="submit">保存修改</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "stoic-planner-v1";
+
+    const initialState = {
+      ideas: [],
+      connections: [],
+      habits: [],
+      habitChecks: {},
+      tasks: [],
+      reflections: [],
+      memos: [],
+      reminderTime: "21:30"
+    };
+
+    let state = loadState();
+    let currentScreen = "today";
+    let taskDraft = null;
+    let editingTaskId = "";
+    let editingItem = null;
+    let activeAddType = "";
+    let selectedTaskType = "simple";
+    const expandedTaskIds = new Set();
+
+    const titles = {
+      today: ["今日", "回到今天，把理念落在行动里。"],
+      self: ["自我", "管理你想成为的人和每日必做。"],
+      confirm: ["每日确认", "用一句话确认方向。"],
+      memo: ["备忘录", "这里不需要证明什么。"]
+    };
+
+    const positions = [
+      [7, 18], [56, 9], [33, 36], [8, 62], [64, 58],
+      [36, 74], [72, 30], [15, 42], [50, 78], [2, 36]
+    ];
+
+    const $ = (selector) => document.querySelector(selector);
+    const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+
+    function createId(prefix) {
+      return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    }
+
+    function loadState() {
+      try {
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return normalizeState({ ...initialState, ...stored });
+      } catch (error) {
+        return { ...initialState };
+      }
+    }
+
+    function normalizeState(nextState) {
+      return {
+        ...nextState,
+        ideas: (nextState.ideas || []).map((idea) => ({
+          ...idea,
+          note: idea.note || ""
+        })),
+        habitChecks: nextState.habitChecks || {},
+        habits: (nextState.habits || []).map((habit) => ({
+          ...habit,
+          startTime: habit.startTime || "",
+          duration: habit.duration || ""
+        })),
+        tasks: (nextState.tasks || []).map((task) => ({
+          ...task,
+          completedAt: task.completedAt || "",
+          taskType: task.taskType || "long",
+          done: Boolean(task.done),
+          startTime: task.startTime || "",
+          duration: task.duration || "",
+          subtasks: (task.subtasks || []).map((subtask) => {
+            if (typeof subtask === "string") {
+              return { text: subtask, done: false };
+            }
+            return { text: subtask.text || "", done: Boolean(subtask.done) };
+          })
+        }))
+      };
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function exportAppData() {
+      return {
+        app: "stoic-planner",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        storageKey: STORAGE_KEY,
+        data: state
+      };
+    }
+
+    function downloadJson(filename, payload) {
+      const json = JSON.stringify(payload, null, 2);
+      if (window.AndroidBridge?.exportData) {
+        window.AndroidBridge.exportData(filename, json);
+        return;
+      }
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function formatTime(value) {
+      return new Intl.DateTimeFormat("zh-CN", {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      }).format(new Date(value));
+    }
+
+    function todayKey() {
+      return new Date().toLocaleDateString("en-CA");
+    }
+
+    function todayLabel() {
+      return new Intl.DateTimeFormat("zh-CN", {
+        month: "long",
+        day: "numeric",
+        weekday: "long"
+      }).format(new Date()).replace("星期", " 星期");
+    }
+
+    function todayDateParts() {
+      const now = new Date();
+      const weekday = new Intl.DateTimeFormat("zh-CN", { weekday: "long" }).format(now);
+      const day = String(now.getDate()).padStart(2, "0");
+      const monthNumber = String(now.getMonth() + 1).padStart(2, "0");
+      const month = new Intl.DateTimeFormat("en-US", { month: "short" }).format(now).toUpperCase();
+      return { weekday, date: `${day}.${monthNumber}`, month };
+    }
+
+    function escapeHtml(value) {
+      return value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function ideaName(id) {
+      return state.ideas.find((idea) => idea.id === id)?.text || "未关联理念";
+    }
+
+    function cleanDuration(value) {
+      const trimmed = String(value || "").trim();
+      if (!trimmed) return "";
+      const number = Number(trimmed);
+      return Number.isInteger(number) && number > 0 ? number : null;
+    }
+
+    function timeMeta(item) {
+      const parts = [];
+      if (item.startTime) parts.push(item.startTime);
+      if (item.duration) parts.push(`${item.duration} 分钟`);
+      return parts.join(" · ");
+    }
+
+    function actionWithTime(item) {
+      const meta = timeMeta(item);
+      return meta ? `${item.title}（${meta}）` : item.title;
+    }
+
+    function selectOptions(selectedId = "") {
+      if (!state.ideas.length) {
+        return '<option value="">先添加理念</option>';
+      }
+      return `<option value="">选择理念</option>${state.ideas.map((idea) => {
+        const selected = idea.id === selectedId ? " selected" : "";
+        return `<option value="${idea.id}"${selected}>${escapeHtml(idea.text)}</option>`;
+      }).join("")}`;
+    }
+
+    function render() {
+      renderHeader();
+      renderToday();
+      renderIdeaControls();
+      renderNetwork();
+      renderIdeaNotes();
+      renderHabits();
+      renderTasks();
+      renderConfirmationStats();
+      renderReflections();
+      renderMemos();
+    }
+
+    function renderHeader() {
+      const [title, subtitle] = titles[currentScreen];
+      $("#screenTitle").textContent = title;
+      $("#screenSubtitle").textContent = subtitle;
+      const topAdd = $("#topAddButton");
+      topAdd.style.display = (currentScreen === "confirm" || currentScreen === "memo") ? "none" : "grid";
+    }
+
+    function renderIdeaControls() {
+      const options = selectOptions();
+      $("#fromIdea").innerHTML = options;
+      $("#toIdea").innerHTML = options;
+      $("#habitIdea").innerHTML = options;
+      $("#taskIdea").innerHTML = options;
+
+      $("#connectionList").innerHTML = state.connections.length
+        ? state.connections.map((connection) => `
+          <button class="chip" type="button" data-delete-connection="${connection.id}">
+            ${escapeHtml(ideaName(connection.from))} - ${escapeHtml(ideaName(connection.to))}
+          </button>
+        `).join("")
+        : '<div class="empty">还没有连接。选择两个理念，让它们互相支撑。</div>';
+    }
+
+    function renderNetwork() {
+      const network = $("#network");
+      if (!state.ideas.length) {
+        network.innerHTML = '<div class="empty">先写下一个自我理念。它会成为所有任务的锚点。</div>';
+        return;
+      }
+
+      const nodes = state.ideas.map((idea, index) => {
+        const [left, top] = positions[index % positions.length];
+        return { ...idea, left, top };
+      });
+
+      const nodeMap = new Map(nodes.map((node) => [node.id, node]));
+      const lines = state.connections.map((connection) => {
+        const from = nodeMap.get(connection.from);
+        const to = nodeMap.get(connection.to);
+        if (!from || !to) return "";
+        return `<line x1="${from.left + 11}%" y1="${from.top + 6}%" x2="${to.left + 11}%" y2="${to.top + 6}%" stroke="rgba(0,47,167,.28)" stroke-width="2"></line>`;
+      }).join("");
+
+      network.innerHTML = `
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${lines}</svg>
+        ${nodes.map((node) => `
+          <button class="node" type="button" data-edit-idea="${node.id}" style="left:${node.left}%; top:${node.top}%;">${escapeHtml(node.text)}</button>
+        `).join("")}
+      `;
+    }
+
+    function renderIdeaNotes() {
+      $("#ideaNotes").innerHTML = state.ideas.some((idea) => idea.note)
+        ? state.ideas
+          .filter((idea) => idea.note)
+          .map((idea) => `
+            <article class="idea-note">
+              <h3 class="idea-note-title">${escapeHtml(idea.text)}</h3>
+              <p class="memo-body">${escapeHtml(idea.note)}</p>
+            </article>
+          `).join("")
+        : "";
+    }
+
+    function renderToday() {
+      const date = todayDateParts();
+      $("#todayDate").innerHTML = `
+        <span class="date-weekday">${escapeHtml(date.weekday)}</span>
+        <span class="date-main">${escapeHtml(date.date)}</span>
+        <span class="date-month">${escapeHtml(date.month)}</span>
+      `;
+      $("#identityAnchor").innerHTML = state.ideas.length
+        ? `“${escapeHtml(state.ideas[0].text)}”${state.ideas[0].note ? `<p class="item-meta">${escapeHtml(state.ideas[0].note)}</p>` : ""}`
+        : "先去「自我」页写下你想成为的人";
+    }
+
+    function isHabitDoneToday(habitId) {
+      return Boolean(state.habitChecks[`${habitId}_${todayKey()}`]);
+    }
+
+    function isTaskDone(task) {
+      if (task.taskType === "simple") {
+        return Boolean(task.done);
+      }
+      return task.subtasks.length > 0 && task.subtasks.every((subtask) => subtask.done);
+    }
+
+    function isTaskCompletedToday(task) {
+      return isTaskDone(task) && task.completedAt === todayKey();
+    }
+
+    function todayHabitMarkup(habit) {
+      const done = isHabitDoneToday(habit.id);
+      return `
+          <article class="item${done ? " completed" : ""}">
+            <div class="item-main">
+              <button class="check-button${done ? " done" : ""}" type="button" data-toggle-habit="${habit.id}" aria-label="${done ? "取消完成习惯" : "完成习惯"}">✓</button>
+              <div>
+                <h3 class="item-title">${escapeHtml(habit.title)}</h3>
+                ${timeMeta(habit) ? `<p class="item-meta">${escapeHtml(timeMeta(habit))}</p>` : ""}
+                <p class="item-meta">关联理念：${escapeHtml(ideaName(habit.ideaId))}</p>
+              </div>
+            </div>
+          </article>`;
+    }
+
+    function managedHabitMarkup(habit) {
+      return `
+          <article class="item">
+            <div class="item-main">
+              <div>
+                <h3 class="item-title">${escapeHtml(habit.title)}</h3>
+                ${timeMeta(habit) ? `<p class="item-meta">${escapeHtml(timeMeta(habit))}</p>` : ""}
+                <p class="item-meta">关联理念：${escapeHtml(ideaName(habit.ideaId))}</p>
+              </div>
+              <div class="item-actions">
+                <button class="ghost" type="button" data-edit-habit="${habit.id}">编辑</button>
+                <button class="danger" type="button" data-delete-habit="${habit.id}">删除</button>
+              </div>
+            </div>
+          </article>`;
+    }
+
+    function renderHabits() {
+      const fullList = state.habits.length
+        ? state.habits.map((habit) => managedHabitMarkup(habit)).join("")
+        : '<div class="empty">还没有每日必做。添加一个每天都会出现的小行动。</div>';
+      const todayList = state.habits.length
+        ? state.habits.map((habit) => todayHabitMarkup(habit)).join("")
+        : '<div class="empty">还没有每日必做。去“自我”页添加一个固定行动。</div>';
+
+      $("#habitList").innerHTML = fullList;
+      $("#todayHabitList").innerHTML = todayList;
+      $$("#todayHabitList .item").forEach((item, index) => {
+        if (isHabitDoneToday(state.habits[index].id)) item.classList.add("habit-done");
+      });
+    }
+
+    function taskMarkup(task, options = {}) {
+      const done = isTaskDone(task);
+      const isCompletedLongTask = task.taskType === "long" && done;
+      const isExpanded = expandedTaskIds.has(task.id);
+      const showDetails = !isCompletedLongTask || isExpanded;
+      const totalSteps = task.taskType === "long" ? task.subtasks.length : 1;
+      const doneSteps = task.taskType === "long" ? task.subtasks.filter((subtask) => subtask.done).length : (done ? 1 : 0);
+      return `
+          <article class="item${done ? " completed" : ""}">
+            <div class="item-main">
+              ${task.taskType === "simple" ? `<button class="check-button${done ? " done" : ""}" type="button" data-toggle-task="${task.id}" aria-label="${done ? "取消完成任务" : "完成任务"}">✓</button>` : ""}
+              <div>
+                <h3 class="item-title task-title">${escapeHtml(task.title)}</h3>
+                ${timeMeta(task) ? `<p class="item-meta">${escapeHtml(timeMeta(task))}</p>` : ""}
+                <span class="idea-badge">${escapeHtml(ideaName(task.ideaId))}</span>
+                ${showDetails ? `<p class="item-meta">值得做：${escapeHtml(task.why)}</p>` : ""}
+              </div>
+              <div class="item-actions">
+                ${done ? '<span class="complete-badge">已完成</span>' : ""}
+                ${isCompletedLongTask ? `<button class="ghost" type="button" data-toggle-task-expanded="${task.id}">${isExpanded ? "收起" : "展开"}</button>` : ""}
+                ${options.showDelete ? `<button class="ghost" type="button" data-edit-task="${task.id}">编辑</button><button class="danger" type="button" data-delete-task="${task.id}">删除</button>` : ""}
+              </div>
+            </div>
+            ${showDetails ? '<div class="task-divider"></div>' : ""}
+            ${task.taskType === "long" && showDetails ? `<ul class="subtasks">
+              ${task.subtasks.map((subtask, index) => `
+                <li class="subtask">
+                  <button class="check-button${subtask.done ? " done" : ""}" type="button" data-toggle-subtask="${task.id}" data-subtask-index="${index}" aria-label="${subtask.done ? "取消完成子任务" : "完成子任务"}">✓</button>
+                  <span class="checkable-text${subtask.done ? " done" : ""}">${escapeHtml(subtask.text)}</span>
+                </li>
+              `).join("")}
+            </ul>` : ""}
+            ${showDetails ? `<p class="task-progress">${doneSteps} / ${totalSteps} 步完成</p>` : ""}
+          </article>`;
+    }
+
+    function renderTasks() {
+      const todayList = state.tasks.length
+        ? state.tasks.map((task) => taskMarkup(task, { showDelete: true })).join("")
+        : '<div class="empty">还没有临时任务。先问清楚为什么值得做，再拆成小步。</div>';
+      $("#todayTaskList").innerHTML = todayList;
+    }
+
+    function completedActionGroups() {
+      const groups = new Map();
+
+      const addAction = (ideaId, title) => {
+        const key = ideaId || "missing";
+        if (!groups.has(key)) {
+          groups.set(key, { idea: ideaName(ideaId), actions: [] });
+        }
+        groups.get(key).actions.push(title);
+      };
+
+      state.habits
+        .filter((habit) => isHabitDoneToday(habit.id))
+        .forEach((habit) => addAction(habit.ideaId, actionWithTime(habit)));
+
+      state.tasks
+        .filter((task) => isTaskCompletedToday(task))
+        .forEach((task) => addAction(task.ideaId, actionWithTime(task)));
+
+      return Array.from(groups.values());
+    }
+
+    function renderConfirmationStats() {
+      const groups = completedActionGroups();
+      $("#confirmationStats").innerHTML = groups.length
+        ? groups.map((group) => `
+          <section class="idea-stat">
+            <h2 class="idea-stat-title">${escapeHtml(group.idea)}</h2>
+            <ul class="idea-stat-list">
+              ${group.actions.map((action) => `<li class="idea-stat-item">${escapeHtml(action)}</li>`).join("")}
+            </ul>
+          </section>
+        `).join("")
+        : '<div class="empty">今天还没有完成的行动可以连接到理念。</div>';
+    }
+
+    function renderReflections() {
+      $("#reflectionList").innerHTML = state.reflections.length
+        ? state.reflections.map((reflection) => `
+          <article class="item">
+            <div class="item-main">
+              <div>
+                <p class="memo-time">${formatTime(reflection.createdAt)}</p>
+                <p class="memo-body">${escapeHtml(reflection.text)}</p>
+              </div>
+              <button class="ghost" type="button" data-edit-reflection="${reflection.id}">编辑</button>
+            </div>
+          </article>
+        `).join("")
+        : '<div class="empty">今晚保存第一条确认。这里不需要复杂统计。</div>';
+    }
+
+    function renderMemos() {
+      $("#memoList").innerHTML = state.memos.length
+        ? state.memos.map((memo) => `
+          <article class="item">
+            <div class="item-main">
+              <div>
+                <p class="memo-time">${formatTime(memo.createdAt)}</p>
+                <p class="memo-body">${escapeHtml(memo.text)}</p>
+              </div>
+              <button class="ghost" type="button" data-edit-memo="${memo.id}">编辑</button>
+            </div>
+          </article>
+        `).join("")
+        : '<div class="empty">还没有备忘。碎片想法可以先放在这里。</div>';
+    }
+
+    function switchScreen(screen) {
+      currentScreen = screen;
+      $$(".screen").forEach((element) => element.classList.toggle("active", element.id === `screen-${screen}`));
+      $$(".nav-button").forEach((button) => button.classList.toggle("active", button.dataset.screen === screen));
+      renderHeader();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function clearError(id) {
+      $(id).textContent = "";
+    }
+
+    function setError(id, message) {
+      $(id).textContent = message;
+    }
+
+    function openTaskModal(taskId = "") {
+      if (!state.ideas.length) {
+        setError("#habitError", "先在“自我”中添加至少一个理念，再添加任务。");
+        switchScreen("self");
+        return;
+      }
+      const task = taskId ? state.tasks.find((item) => item.id === taskId) : null;
+      editingTaskId = task?.id || "";
+      taskDraft = null;
+      selectedTaskType = task?.taskType || "simple";
+      renderTaskTypeControls();
+      $("#taskModalTitle").textContent = task ? "编辑临时任务" : "添加临时任务";
+      $("#finishTaskButton").textContent = task ? "保存修改" : "完成添加";
+      $("#taskTitle").value = task?.title || "";
+      $("#taskWhy").value = task?.why || "";
+      $("#taskIdea").value = task?.ideaId || "";
+      $("#taskStartTime").value = task?.startTime || "";
+      $("#taskDuration").value = task?.duration || "";
+      $("#taskStepOneError").textContent = "";
+      $("#taskStepTwoError").textContent = "";
+      resetSubtasks(task?.subtasks || []);
+      showTaskStep(1);
+      $("#taskModal").classList.add("open");
+      $("#taskTitle").focus();
+    }
+
+    function renderTaskTypeControls() {
+      $$("[data-task-type]").forEach((button) => {
+        button.classList.toggle("active", button.dataset.taskType === selectedTaskType);
+      });
+      $("#taskStepOneButton").textContent = selectedTaskType === "simple" ? "保存任务" : "继续拆解";
+    }
+
+    function saveTask(taskPayload, subtasks = []) {
+      const existingTask = editingTaskId ? state.tasks.find((task) => task.id === editingTaskId) : null;
+      if (existingTask) {
+        const wasDone = isTaskDone(existingTask);
+        existingTask.title = taskPayload.title;
+        existingTask.why = taskPayload.why;
+        existingTask.ideaId = taskPayload.ideaId;
+        existingTask.startTime = taskPayload.startTime;
+        existingTask.duration = taskPayload.duration;
+        existingTask.taskType = taskPayload.taskType;
+        if (taskPayload.taskType === "simple") {
+          existingTask.done = Boolean(existingTask.done);
+          existingTask.subtasks = [];
+        } else {
+          existingTask.done = false;
+          existingTask.subtasks = subtasks;
+        }
+        existingTask.completedAt = isTaskDone(existingTask) ? (existingTask.completedAt || todayKey()) : "";
+        if (wasDone && !isTaskDone(existingTask)) {
+          existingTask.completedAt = "";
+        }
+      } else {
+        state.tasks.unshift({
+          id: createId("task"),
+          ...taskPayload,
+          done: false,
+          subtasks,
+          createdAt: new Date().toISOString(),
+          completedAt: ""
+        });
+      }
+      taskDraft = null;
+      editingTaskId = "";
+      saveState();
+      $("#taskModal").classList.remove("open");
+      render();
+    }
+
+    function closeTaskModal() {
+      if (!$("#taskStepTwo").hidden) {
+        const shouldClose = confirm("你还没完成拆解。\n离开会丢失当前进度，确定要离开吗？");
+        if (!shouldClose) {
+          return;
+        }
+        taskDraft = null;
+        editingTaskId = "";
+        resetSubtasks();
+      }
+      $("#taskModal").classList.remove("open");
+    }
+
+    function showTaskStep(step) {
+      const isFirst = step === 1;
+      $("#taskStepOne").hidden = !isFirst;
+      $("#taskStepTwo").hidden = isFirst;
+      $("#stepDotOne").classList.toggle("active", isFirst);
+      $("#stepDotTwo").classList.toggle("active", !isFirst);
+      $("#taskModalNote").textContent = isFirst ? "先确认它为什么值得做。" : "长任务需要拆到每一步都能在 5-30 分钟内完成。";
+    }
+
+    function resetSubtasks(subtasks = []) {
+      $("#subtaskFields").innerHTML = "";
+      if (!subtasks.length) {
+        addSubtaskField();
+        return;
+      }
+      subtasks.forEach((subtask) => addSubtaskField(typeof subtask === "string" ? subtask : subtask.text));
+    }
+
+    function addSubtaskField(value = "") {
+      const row = document.createElement("div");
+      row.className = "subtask-row";
+      row.innerHTML = `
+        <input class="input subtask-input" maxlength="48" placeholder="例如：列出作品集目录" value="${escapeHtml(value)}">
+        <button class="icon-button" type="button" aria-label="删除子任务">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+        </button>
+      `;
+      row.querySelector("button").addEventListener("click", () => {
+        if ($$(".subtask-input").length > 1) {
+          row.remove();
+        } else {
+          row.querySelector("input").value = "";
+        }
+      });
+      $("#subtaskFields").appendChild(row);
+    }
+
+    $("#ideaForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = $("#ideaInput").value.trim();
+      const note = $("#ideaNoteInput").value.trim();
+      clearError("#ideaError");
+      if (!text) {
+        setError("#ideaError", "请写下一个理念。");
+        return;
+      }
+      state.ideas.push({ id: createId("idea"), text, note });
+      $("#ideaInput").value = "";
+      $("#ideaNoteInput").value = "";
+      $("#ideaForm").hidden = true;
+      saveState();
+      render();
+    });
+
+    $("#connectionForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const from = $("#fromIdea").value;
+      const to = $("#toIdea").value;
+      clearError("#connectionError");
+      if (!from || !to) {
+        setError("#connectionError", "请选择两个理念。");
+        return;
+      }
+      if (from === to) {
+        setError("#connectionError", "连接需要两个不同理念。");
+        return;
+      }
+      const exists = state.connections.some((connection) =>
+        (connection.from === from && connection.to === to) ||
+        (connection.from === to && connection.to === from)
+      );
+      if (exists) {
+        setError("#connectionError", "这两个理念已经连接。");
+        return;
+      }
+      state.connections.push({ id: createId("connection"), from, to });
+      saveState();
+      render();
+    });
+
+    $("#habitForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const title = $("#habitInput").value.trim();
+      const startTime = $("#habitStartTime").value;
+      const duration = cleanDuration($("#habitDuration").value);
+      const ideaId = $("#habitIdea").value;
+      clearError("#habitError");
+      if (!title) {
+        setError("#habitError", "请写下一个每日习惯。");
+        return;
+      }
+      if (!ideaId) {
+        setError("#habitError", "每个习惯都需要关联一个理念。");
+        return;
+      }
+      if (duration === null) {
+        setError("#habitError", "预计耗时需要是正整数。");
+        return;
+      }
+      state.habits.push({ id: createId("habit"), title, ideaId, startTime, duration });
+      $("#habitInput").value = "";
+      $("#habitStartTime").value = "";
+      $("#habitDuration").value = "";
+      $("#habitIdea").value = "";
+      $("#habitForm").hidden = true;
+      saveState();
+      render();
+    });
+
+    $("#taskStepOne").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const title = $("#taskTitle").value.trim();
+      const why = $("#taskWhy").value.trim();
+      const ideaId = $("#taskIdea").value;
+      const startTime = $("#taskStartTime").value;
+      const duration = cleanDuration($("#taskDuration").value);
+      clearError("#taskStepOneError");
+      if (!title || !why || !ideaId) {
+        setError("#taskStepOneError", "请填写任务、原因，并选择关联理念。");
+        return;
+      }
+      if (duration === null) {
+        setError("#taskStepOneError", "预计耗时需要是正整数。");
+        return;
+      }
+      taskDraft = { title, why, ideaId, startTime, duration, taskType: selectedTaskType };
+      if (selectedTaskType === "simple") {
+        saveTask(taskDraft);
+        return;
+      }
+      showTaskStep(2);
+      $(".subtask-input").focus();
+    });
+
+    $("#taskStepTwo").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const existingTask = editingTaskId ? state.tasks.find((task) => task.id === editingTaskId) : null;
+      const subtasks = $$(".subtask-input")
+        .map((input, index) => ({ text: input.value.trim(), done: Boolean(existingTask?.subtasks[index]?.done) }))
+        .filter((subtask) => subtask.text);
+      const normalizedSubtasks = subtasks
+        .map((subtask) => ({ text: subtask.text, done: subtask.done }));
+      clearError("#taskStepTwoError");
+      if (!normalizedSubtasks.length) {
+        setError("#taskStepTwoError", "至少写下一步 5-30 分钟内可以完成的行动。");
+        return;
+      }
+      saveTask(taskDraft, normalizedSubtasks);
+    });
+
+    $("#reflectionForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = $("#reflectionInput").value.trim();
+      clearError("#reflectionError");
+      if (!text) {
+        setError("#reflectionError", "请写下一句确认。");
+        return;
+      }
+      state.reflections.unshift({ id: createId("reflection"), text, createdAt: new Date().toISOString() });
+      $("#reflectionInput").value = "";
+      saveState();
+      render();
+    });
+
+    $("#memoForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = $("#memoInput").value.trim();
+      clearError("#memoError");
+      if (!text) {
+        setError("#memoError", "备忘内容不能为空。");
+        return;
+      }
+      state.memos.unshift({ id: createId("memo"), text, createdAt: new Date().toISOString() });
+      $("#memoInput").value = "";
+      saveState();
+      render();
+    });
+
+    $("#exportDataButton").addEventListener("click", () => {
+      const stamp = new Date().toISOString().slice(0, 10);
+      downloadJson(`stoic-planner-backup-${stamp}.json`, exportAppData());
+      $("#backupMessage").textContent = "已准备导出数据。";
+    });
+
+    $("#importDataButton").addEventListener("click", () => {
+      $("#importDataInput").click();
+    });
+
+    $("#importDataInput").addEventListener("change", async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        const payload = JSON.parse(await file.text());
+        const imported = payload.data || payload;
+        if (!imported || !Array.isArray(imported.ideas) || !Array.isArray(imported.tasks)) {
+          throw new Error("Invalid backup");
+        }
+        state = normalizeState({ ...initialState, ...imported });
+        saveState();
+        render();
+        $("#backupMessage").textContent = "数据已导入。";
+      } catch (error) {
+        $("#backupMessage").textContent = "导入失败，请选择正确的备份文件。";
+      } finally {
+        event.target.value = "";
+      }
+    });
+
+    $$(".open-task-modal").forEach((button) => button.addEventListener("click", () => openTaskModal()));
+    $("#closeTaskModal").addEventListener("click", closeTaskModal);
+    $("#taskModal").addEventListener("click", (event) => {
+      if (event.target.id === "taskModal") closeTaskModal();
+    });
+    $("#addSubtask").addEventListener("click", () => addSubtaskField());
+    $("#backToTaskStepOne").addEventListener("click", () => showTaskStep(1));
+    $("#cancelIdeaForm").addEventListener("click", () => {
+      $("#ideaInput").value = "";
+      $("#ideaNoteInput").value = "";
+      $("#ideaError").textContent = "";
+      $("#ideaForm").hidden = true;
+    });
+    $("#cancelHabitForm").addEventListener("click", () => {
+      $("#habitInput").value = "";
+      $("#habitStartTime").value = "";
+      $("#habitDuration").value = "";
+      $("#habitIdea").value = "";
+      $("#habitError").textContent = "";
+      $("#habitForm").hidden = true;
+    });
+    $$("[data-task-type]").forEach((button) => {
+      button.addEventListener("click", () => {
+        selectedTaskType = button.dataset.taskType;
+        renderTaskTypeControls();
+      });
+    });
+
+    $("#topAddButton").addEventListener("click", () => {
+      if (currentScreen === "today") {
+        openTaskModal();
+        return;
+      }
+      if (currentScreen === "self") {
+        openSelfActionModal();
+        return;
+      }
+      if (currentScreen === "confirm") {
+        $("#reflectionInput").focus();
+        return;
+      }
+      $("#memoInput").focus();
+    });
+
+    function openSelfActionModal() {
+      $("#selfActionModal").classList.add("open");
+    }
+
+    function closeSelfActionModal() {
+      $("#selfActionModal").classList.remove("open");
+    }
+
+    $("#closeSelfActionModal").addEventListener("click", closeSelfActionModal);
+
+    $("#selfActionModal").addEventListener("click", (event) => {
+      if (event.target.id === "selfActionModal") closeSelfActionModal();
+    });
+
+    $$("[data-self-action]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const type = button.dataset.selfAction;
+        closeSelfActionModal();
+        openAddModal(type);
+      });
+    });
+
+    function openAddModal(type) {
+      activeAddType = type;
+      $("#addError").textContent = "";
+      $("#addFields").innerHTML = addFieldsFor(type);
+      $("#addModalTitle").textContent = {
+        idea: "添加理念",
+        connection: "添加连接",
+        habit: "添加每日必做"
+      }[type];
+      $("#addModal").classList.add("open");
+      $("#addFields").querySelector("input, textarea, select")?.focus();
+    }
+
+    function closeAddModal() {
+      activeAddType = "";
+      $("#addModal").classList.remove("open");
+    }
+
+    function addFieldsFor(type) {
+      if (type === "idea") {
+        return `
+          <label class="field">
+            <span class="label">我想成为...</span>
+            <input class="input" id="addIdeaText" maxlength="24" placeholder="例如：自律、独立、有能力">
+          </label>
+          <label class="field">
+            <span class="label">理念阐述</span>
+            <textarea class="textarea" id="addIdeaNote" placeholder="写一句你为什么重视这个理念。"></textarea>
+          </label>`;
+      }
+      if (type === "connection") {
+        return `
+          <label class="field">
+            <span class="label">起点理念</span>
+            <select class="select" id="addConnectionFrom">${selectOptions()}</select>
+          </label>
+          <label class="field">
+            <span class="label">终点理念</span>
+            <select class="select" id="addConnectionTo">${selectOptions()}</select>
+          </label>`;
+      }
+      return `
+        <label class="field">
+          <span class="label">习惯</span>
+          <input class="input" id="addHabitTitle" maxlength="28" placeholder="例如：学习英文 20 分钟">
+        </label>
+        <label class="field">
+          <span class="label">开始时间</span>
+          <input class="input" id="addHabitStartTime" type="time">
+        </label>
+        <label class="field">
+          <span class="label">预计耗时（分钟）</span>
+          <input class="input" id="addHabitDuration" type="number" min="1" step="1" placeholder="例如：20">
+        </label>
+        <label class="field">
+          <span class="label">关联理念</span>
+          <select class="select" id="addHabitIdea">${selectOptions()}</select>
+        </label>`;
+    }
+
+    $("#closeAddModal").addEventListener("click", closeAddModal);
+
+    $("#addModal").addEventListener("click", (event) => {
+      if (event.target.id === "addModal") closeAddModal();
+    });
+
+    $("#editModal").addEventListener("click", (event) => {
+      if (event.target.id === "editModal") closeEditModal();
+    });
+
+    $("#addForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      $("#addError").textContent = "";
+
+      if (activeAddType === "idea") {
+        const text = $("#addIdeaText").value.trim();
+        const note = $("#addIdeaNote").value.trim();
+        if (!text) {
+          setError("#addError", "请写下一个理念。");
+          return;
+        }
+        state.ideas.push({ id: createId("idea"), text, note });
+      }
+
+      if (activeAddType === "connection") {
+        const from = $("#addConnectionFrom").value;
+        const to = $("#addConnectionTo").value;
+        if (!from || !to || from === to) {
+          setError("#addError", "请选择两个不同理念。");
+          return;
+        }
+        const exists = state.connections.some((connection) =>
+          (connection.from === from && connection.to === to) ||
+          (connection.from === to && connection.to === from)
+        );
+        if (exists) {
+          setError("#addError", "这两个理念已经连接。");
+          return;
+        }
+        state.connections.push({ id: createId("connection"), from, to });
+      }
+
+      if (activeAddType === "habit") {
+        const title = $("#addHabitTitle").value.trim();
+        const startTime = $("#addHabitStartTime").value;
+        const duration = cleanDuration($("#addHabitDuration").value);
+        const ideaId = $("#addHabitIdea").value;
+        if (!title || !ideaId) {
+          setError("#addError", "请填写习惯并选择关联理念。");
+          return;
+        }
+        if (duration === null) {
+          setError("#addError", "预计耗时需要是正整数。");
+          return;
+        }
+        state.habits.push({ id: createId("habit"), title, ideaId, startTime, duration });
+      }
+
+      saveState();
+      closeAddModal();
+      render();
+    });
+
+    function openEditModal(type, id) {
+      editingItem = { type, id };
+      $("#editError").textContent = "";
+      $("#editFields").innerHTML = editFieldsFor(type, id);
+      $("#editModalTitle").textContent = editTitleFor(type);
+      $("#editModal").classList.add("open");
+      $("#editFields").querySelector("input, textarea, select")?.focus();
+    }
+
+    function closeEditModal() {
+      editingItem = null;
+      $("#editModal").classList.remove("open");
+    }
+
+    function editTitleFor(type) {
+      return {
+        idea: "编辑理念",
+        habit: "编辑每日必做",
+        reflection: "编辑每日确认",
+        memo: "编辑备忘"
+      }[type];
+    }
+
+    function editFieldsFor(type, id) {
+      if (type === "idea") {
+        const idea = state.ideas.find((item) => item.id === id);
+        return `
+          <label class="field">
+            <span class="label">理念</span>
+            <input class="input" id="editText" maxlength="24" value="${escapeHtml(idea?.text || "")}">
+          </label>
+          <label class="field">
+            <span class="label">理念阐述</span>
+            <textarea class="textarea" id="editNote">${escapeHtml(idea?.note || "")}</textarea>
+          </label>`;
+      }
+      if (type === "habit") {
+        const habit = state.habits.find((item) => item.id === id);
+        return `
+          <label class="field">
+            <span class="label">每日必做</span>
+            <input class="input" id="editTitle" maxlength="28" value="${escapeHtml(habit?.title || "")}">
+          </label>
+          <label class="field">
+            <span class="label">开始时间</span>
+            <input class="input" id="editStartTime" type="time" value="${escapeHtml(habit?.startTime || "")}">
+          </label>
+          <label class="field">
+            <span class="label">预计耗时（分钟）</span>
+            <input class="input" id="editDuration" type="number" min="1" step="1" value="${escapeHtml(String(habit?.duration || ""))}">
+          </label>
+          <label class="field">
+            <span class="label">关联理念</span>
+            <select class="select" id="editIdea">${selectOptions(habit?.ideaId || "")}</select>
+          </label>`;
+      }
+      const collection = type === "reflection" ? "reflections" : "memos";
+      const item = state[collection].find((entry) => entry.id === id);
+      return `
+        <label class="field">
+          <span class="label">${type === "reflection" ? "每日确认" : "备忘"}</span>
+          <textarea class="textarea" id="editText">${escapeHtml(item?.text || "")}</textarea>
+        </label>`;
+    }
+
+    $("#closeEditModal").addEventListener("click", closeEditModal);
+
+    $("#editForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!editingItem) return;
+      $("#editError").textContent = "";
+
+      if (editingItem.type === "idea") {
+        const idea = state.ideas.find((item) => item.id === editingItem.id);
+        const text = $("#editText").value.trim();
+        if (!idea || !text) {
+          setError("#editError", "内容不能为空。");
+          return;
+        }
+        idea.text = text;
+        idea.note = $("#editNote").value.trim();
+      }
+
+      if (editingItem.type === "habit") {
+        const habit = state.habits.find((item) => item.id === editingItem.id);
+        const title = $("#editTitle").value.trim();
+        const ideaId = $("#editIdea").value;
+        const duration = cleanDuration($("#editDuration").value);
+        if (!habit || !title || !ideaId) {
+          setError("#editError", "请填写名称并选择关联理念。");
+          return;
+        }
+        if (duration === null) {
+          setError("#editError", "预计耗时需要是正整数。");
+          return;
+        }
+        habit.title = title;
+        habit.ideaId = ideaId;
+        habit.startTime = $("#editStartTime").value;
+        habit.duration = duration;
+      }
+
+      if (editingItem.type === "reflection" || editingItem.type === "memo") {
+        const collection = editingItem.type === "reflection" ? "reflections" : "memos";
+        const item = state[collection].find((entry) => entry.id === editingItem.id);
+        const text = $("#editText").value.trim();
+        if (!item || !text) {
+          setError("#editError", "内容不能为空。");
+          return;
+        }
+        item.text = text;
+      }
+
+      saveState();
+      closeEditModal();
+      render();
+    });
+
+    document.addEventListener("click", (event) => {
+      const nav = event.target.closest("[data-screen]");
+      if (nav) {
+        switchScreen(nav.dataset.screen);
+        return;
+      }
+
+      const ideaId = event.target.closest("[data-edit-idea]")?.dataset.editIdea;
+      if (ideaId) {
+        openEditModal("idea", ideaId);
+        return;
+      }
+
+      const habitEditId = event.target.closest("[data-edit-habit]")?.dataset.editHabit;
+      if (habitEditId) {
+        openEditModal("habit", habitEditId);
+        return;
+      }
+
+      const taskEditId = event.target.closest("[data-edit-task]")?.dataset.editTask;
+      if (taskEditId) {
+        openTaskModal(taskEditId);
+        return;
+      }
+
+      const reflectionEditId = event.target.closest("[data-edit-reflection]")?.dataset.editReflection;
+      if (reflectionEditId) {
+        openEditModal("reflection", reflectionEditId);
+        return;
+      }
+
+      const memoEditId = event.target.closest("[data-edit-memo]")?.dataset.editMemo;
+      if (memoEditId) {
+        openEditModal("memo", memoEditId);
+        return;
+      }
+
+      const toggleHabitId = event.target.closest("[data-toggle-habit]")?.dataset.toggleHabit;
+      if (toggleHabitId) {
+        const key = `${toggleHabitId}_${todayKey()}`;
+        state.habitChecks[key] = !state.habitChecks[key];
+        saveState();
+        render();
+        return;
+      }
+
+      const taskToggleId = event.target.closest("[data-toggle-task]")?.dataset.toggleTask;
+      if (taskToggleId) {
+        const task = state.tasks.find((item) => item.id === taskToggleId);
+        if (task) {
+          task.done = !task.done;
+          task.completedAt = task.done ? todayKey() : "";
+          saveState();
+          render();
+        }
+        return;
+      }
+
+      const expandTaskId = event.target.closest("[data-toggle-task-expanded]")?.dataset.toggleTaskExpanded;
+      if (expandTaskId) {
+        if (expandedTaskIds.has(expandTaskId)) {
+          expandedTaskIds.delete(expandTaskId);
+        } else {
+          expandedTaskIds.add(expandTaskId);
+        }
+        render();
+        return;
+      }
+
+      const subtaskToggle = event.target.closest("[data-toggle-subtask]");
+      if (subtaskToggle) {
+        const task = state.tasks.find((item) => item.id === subtaskToggle.dataset.toggleSubtask);
+        const index = Number(subtaskToggle.dataset.subtaskIndex);
+        if (task && task.subtasks[index]) {
+          const wasDone = isTaskDone(task);
+          task.subtasks[index].done = !task.subtasks[index].done;
+          const nowDone = isTaskDone(task);
+          if (!wasDone && nowDone) {
+            task.completedAt = todayKey();
+          }
+          if (wasDone && !nowDone) {
+            task.completedAt = "";
+            expandedTaskIds.delete(task.id);
+          }
+          saveState();
+          render();
+        }
+        return;
+      }
+
+      const habitId = event.target.closest("[data-delete-habit]")?.dataset.deleteHabit;
+      if (habitId) {
+        state.habits = state.habits.filter((habit) => habit.id !== habitId);
+        saveState();
+        render();
+        return;
+      }
+
+      const taskId = event.target.closest("[data-delete-task]")?.dataset.deleteTask;
+      if (taskId) {
+        state.tasks = state.tasks.filter((task) => task.id !== taskId);
+        expandedTaskIds.delete(taskId);
+        saveState();
+        render();
+        return;
+      }
+
+      const connectionId = event.target.closest("[data-delete-connection]")?.dataset.deleteConnection;
+      if (connectionId) {
+        state.connections = state.connections.filter((connection) => connection.id !== connectionId);
+        saveState();
+        render();
+      }
+    });
+
+    render();
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
